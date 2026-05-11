@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Freelance Contract Generator</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 40px 20px; }
+    .container { max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 12px; }
+    h1 { font-size: 24px; margin-bottom: 8px; color: #111; }
+    p { color: #666; margin-bottom: 30px; font-size: 14px; }
+    label { display: block; font-size: 13px; font-weight: bold; color: #333; margin-bottom: 6px; }
+    input { width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; margin-bottom: 20px; }
+    button { width: 100%; padding: 14px; background: #1a1a1a; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; }
+    button:hover { background: #333; }
+    #result { margin-top: 30px; display: none; }
+    #result h2 { font-size: 16px; margin-bottom: 12px; }
+    #contract { background: #f9f9f9; border: 1px solid #eee; border-radius: 8px; padding: 20px; font-size: 13px; line-height: 1.8; white-space: pre-wrap; }
+    #copy-btn { margin-top: 12px; background: #0070f3; }
+    .loading { text-align: center; color: #666; margin-top: 20px; display: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Freelance Contract Generator</h1>
+    <p>Fill in the details below and get a professional contract in seconds.</p>
+
+    <label>Your name (freelancer)</label>
+    <input type="text" id="freelancerName" placeholder="John Smith" />
+
+    <label>Client name</label>
+    <input type="text" id="clientName" placeholder="Acme Pty Ltd" />
+
+    <label>Mission / services</label>
+    <input type="text" id="mission" placeholder="Web design, 5 pages" />
+
+    <label>Price (AUD)</label>
+    <input type="number" id="price" placeholder="1500" />
+
+    <label>Duration</label>
+    <input type="text" id="duration" placeholder="3 weeks" />
+
+    <label>Start date</label>
+    <input type="date" id="startDate" />
+
+    <button onclick="generate()">Generate my contract</button>
+
+    <div class="loading" id="loading">Generating your contract...</div>
+
+    <div id="result">
+      <h2>Your contract is ready</h2>
+      <div id="contract"></div>
+      <button id="copy-btn" onclick="copyContract()">Copy contract</button>
+    </div>
+  </div>
+
+  <script>
+    async function generate() {
+      const data = {
+        freelancerName: document.getElementById('freelancerName').value,
+        clientName: document.getElementById('clientName').value,
+        mission: document.getElementById('mission').value,
+        price: document.getElementById('price').value,
+        duration: document.getElementById('duration').value,
+        startDate: document.getElementById('startDate').value
+      };
+
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('result').style.display = 'none';
+
+      const res = await fetch('/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      const json = await res.json();
+      document.getElementById('contract').textContent = json.contract;
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('result').style.display = 'block';
+    }
+
+    function copyContract() {
+      const text = document.getElementById('contract').textContent;
+      navigator.clipboard.writeText(text);
+      document.getElementById('copy-btn').textContent = 'Copied!';
+      setTimeout(() => document.getElementById('copy-btn').textContent = 'Copy contract', 2000);
+    }
+  </script>
+</body>
+</html>
