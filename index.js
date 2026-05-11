@@ -4,7 +4,7 @@ const path = require('path');
 const app = express();
 
 app.use(express.json());
-app.use(express.static('.'));
+app.use(express.static(path.join(__dirname, '.')));
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
@@ -92,6 +92,4 @@ Date: _______________`;
   res.json({ contract });
 });
 
-app.listen(3000, () => {
-  console.log('App running on http://localhost:3000');
-});
+module.exports = app;
